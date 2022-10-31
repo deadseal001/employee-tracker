@@ -1,33 +1,31 @@
-const inquirer=require('inquirer');
-const cTable=require('console.table');
-const mysql = require('mysql2');
+// const inquirer=require('inquirer');
+// const cTable=require('console.table');
+// const mysql = require('mysql2');
 const db = require('./db/connection');
-//const { promotequestions, findById, createNewAnimal, validateAnimal } = require('./utils/functions');
-
-const PORT = process.env.PORT || 3001;
-
+const promotequestions = require('./utils/functions');
+const chalk = require('chalk');
 
 
 db.connect(err => {
     if (err) throw err;
-    console.log('Database connected.');
-    console.log(',-----------------------------------------------------.');
-    console.log('|                                                     |');
-    console.log('|    _____                 _                          |');
-    console.log('|   |  ___|_ __ ___  _ __ | | ___  _   _  ___  ___    |');
-    console.log("|   |  _| | '_ ` _ \\| '_ \\| |/ _ \\| | | |/ _ \\/ _ \\   |");
-    console.log("|   | |___| | | | | | |_) | | (_) | |_| |  __/| __/   |");
-    console.log("|   |_____|_| |_| |_| .__/|_|\\___/ \\__, |\\___| \\__|   |");
-    console.log("|                   |_|            |____/             |");
-    console.log("|    __  __                                           |");
-    console.log('|   |  \\/  | __ _ _ __   __ _  __ _  ___ _ __         |');
-    console.log("|   | |\\/| |/ _` | '_ \\ / _` |/ _` |/ _ \\ '__|        |");
-    console.log("|   | |  | | (_| | | | | (_| | (_| |  __/ |           |");
-    console.log("|   |_|  |_|\\__,_|_| |_|\\__,_|\\__, |\\___|_|           |");
-    console.log("|                             |___/                   |");
-    console.log("|                                                     |");
-    console.log("|_____________________________________________________|");
+    console.log(chalk.green('Database connected.'));
+    console.log(chalk.yellow(',-----------------------------------------------------.'));
+    console.log(chalk.yellow('|                                                     |'));
+    console.log(chalk.yellow('|    _____                 _                          |'));
+    console.log(chalk.yellow('|   |  ___|_ __ ___  _ __ | | ___  _   _  ___  ___    |'));
+    console.log(chalk.yellow("|   |  _| | '_ ` _ \\| '_ \\| |/ _ \\| | | |/ _ \\/ _ \\   |"));
+    console.log(chalk.yellow("|   | |___| | | | | | |_) | | (_) | |_| |  __/| __/   |"));
+    console.log(chalk.yellow("|   |_____|_| |_| |_| .__/|_|\\___/ \\__, |\\___| \\__|   |"));
+    console.log(chalk.yellow("|                   |_|            |____/             |"));
+    console.log(chalk.yellow("|    __  __                                           |"));
+    console.log(chalk.yellow('|   |  \\/  | __ _ _ __   __ _  __ _  ___ _ __         |'));
+    console.log(chalk.yellow("|   | |\\/| |/ _` | '_ \\ / _` |/ _` |/ _ \\ '__|        |"));
+    console.log(chalk.yellow("|   | |  | | (_| | | | | (_| | (_| |  __/ |           |"));
+    console.log(chalk.yellow("|   |_|  |_|\\__,_|_| |_|\\__,_|\\__, |\\___|_|           |"));
+    console.log(chalk.yellow("|                             |___/                   |"));
+    console.log(chalk.yellow("|                                                     |"));
+    console.log(chalk.yellow("`-----------------------------------------------------'"));
 
-    //promotequestions();
+    promotequestions();
     return;
 })
