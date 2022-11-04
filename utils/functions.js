@@ -4,6 +4,8 @@ const db = require('../db/connection');
 const mysql = require('mysql2');
 const chalk = require('chalk');
 
+
+//promote main choices for users to choose
 const promotequestions=()=>{
     inquirer.prompt (
         {
@@ -78,6 +80,7 @@ const promotequestions=()=>{
     })
 };
 
+//function to show all the employees
 const showallemployee=()=>{
     let sql=`SELECT e.id, e.first_name AS "First Name", e.last_name AS "Last Name", r.title as "Title", d.name AS "Department", IFNULL(r.salary, 'No Data') AS "Salary", CONCAT(m.first_name," ",m.last_name) AS "Manager"
     FROM employees e
@@ -95,6 +98,7 @@ const showallemployee=()=>{
     })
 }
 
+//function to add an employee
 const addemployee=() =>{
     let sql=`SELECT * FROM roles; 
     SELECT id, CONCAT(first_name," ",last_name) AS "full_name" FROM employees`;
@@ -159,6 +163,7 @@ const addemployee=() =>{
     })
 }
 
+//function to update the role of an employee
 const updateEmployeeRole=()=>{
     let sql=`select concat (first_name," ",last_name) as name from employees; select title from roles`;
     db.query(sql,(err, results)=>{
@@ -192,6 +197,7 @@ const updateEmployeeRole=()=>{
     });
 };
 
+//function to view all the roles
 const viewRoles=()=>{
     let sql=`select title as "Title", salary as "Salary", d.name as "Department" from roles r left join departments d on d.id =r.department_id;`;
     db.query(sql,(err,results)=>{
@@ -202,6 +208,7 @@ const viewRoles=()=>{
     });
 }
 
+//function to add a new role
 const addRole=()=>{
     const sql=`select * from departments; select title as "Title", salary as "Salary", d.name as "Department" from roles r left join departments d on d.id =r.department_id;`;
     db.query(sql,(err,results)=>{
@@ -252,6 +259,7 @@ const addRole=()=>{
     })
 }
 
+//function to view all departments
 const viewDeparments=()=>{
     let sql= 'select name as "Department Name" from departments';
     db.query(sql,(err,results)=>{
@@ -262,6 +270,7 @@ const viewDeparments=()=>{
     })
 }
 
+//function to add a new Department
 const addDepartment=()=>{
     const sql=`select name as "Department Name" from departments;`;
     db.query(sql,(err,results)=>{
@@ -293,6 +302,7 @@ const addDepartment=()=>{
     })
 }
 
+//function to  to update the manager of an employee
 const updateEManage=()=>{
     let sql =`select concat (first_name," ",last_name) as name from employees;`
     db.query(sql, (err,results)=>{
@@ -325,6 +335,7 @@ const updateEManage=()=>{
     })
 }
 
+//function to view employees by department
 const viewbyDepart=()=>{
     //add function
     db.query(`select name from departments`,(err,results)=>{
@@ -357,6 +368,7 @@ const viewbyDepart=()=>{
     });
 };
 
+//function to delete an department
 const deleteDepart=()=>{
     db.query(`select name from departments`,(err,results)=>{
         if (err) throw err;
@@ -380,6 +392,7 @@ const deleteDepart=()=>{
     });
 };
 
+//function to delete a role
 const deleteRole=()=>{
     db.query(`select title from roles`,(err,results)=>{
         inquirer.prompt([
@@ -402,6 +415,7 @@ const deleteRole=()=>{
     });
 };
 
+//function to delete an employee
 const deleteEmployee=()=>{
     let sql=`select concat (first_name," ",last_name) as name from employees;`;
     db.query(sql,(err, results)=>{

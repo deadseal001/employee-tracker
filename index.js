@@ -1,6 +1,4 @@
-// const inquirer=require('inquirer');
-// const cTable=require('console.table');
-// const mysql = require('mysql2');
+// start page 
 const db = require('./db/connection');
 const promotequestions = require('./utils/functions');
 const chalk = require('chalk');
@@ -25,7 +23,7 @@ db.connect(err => {
     console.log(chalk.yellow("|                             |___/                   |"));
     console.log(chalk.yellow("|                                                     |"));
     console.log(chalk.yellow("`-----------------------------------------------------'"));
-
+    //call main function
     promotequestions();
     return;
 })
