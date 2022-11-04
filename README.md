@@ -5,6 +5,7 @@
 -[Usage](#Usage)
 -[Github](#Github)
 -[Screenshot](#Screenshot)
+-[Demo](#Demo)
 
 
 
@@ -29,3 +30,6 @@ https://github.com/deadseal001/employee-tracker
 
 ## Screenshot
 ![Screen Shot 2022-11-03 at 10 21 26 PM](https://user-images.githubusercontent.com/110753777/199878570-52b09ad1-7de7-4e88-be08-1e5c5565a981.png)
+
+## Demo
+https://watch.screencastify.com/v/5i37nE43DSevaIr96Fje
