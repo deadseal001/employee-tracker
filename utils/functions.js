@@ -18,15 +18,14 @@ const promotequestions=()=>{
                     'Add a role', 
                     'View all departments',
                     'Add a department', 
+                    'Update an employee manager',
+                    'View employees by department',
+                    'Delete department',
+                    'Delete role',
+                    "Delete an employee",
                     'Quit'
                     ]
-                    //'Update an employee manager',
-                    //"View employees by department",
-                    //'Delete a department',
-                    //'Delete a role',
-                    //'Delete an employee',
-                    //'View department budgets',
-                    //'No Action']
+
         }
     )
     .then((answer)=>{
@@ -54,7 +53,22 @@ const promotequestions=()=>{
             case 'Add a department':
                 addDepartment();
                 break;
-            case "Quit":
+            case 'Update an employee manager':
+                updateEManage();
+                break;
+            case 'View employees by department':
+                viewbyDepart();
+                break;
+            case 'Delete department':
+                deleteDepart();
+                break;
+            case 'Delete role':
+                deleteRole();
+                break;
+            case 'Delete an employee':
+                deleteEmployee();
+                break;
+            case 'Quit':
                 db.end();
                 break;
             default:
@@ -136,7 +150,7 @@ const addemployee=() =>{
             values (?,?,(select id from roles where title = ? ),(select id from (select id from employees where concat(first_name," ",last_name) = ? ) AS tmpt));`;
             db.query(sql,[answer.newFirstName.trim(), answer.newLastName.trim(), answer.newRole, answer.newEManager],(err,result)=>{
                 if (err) throw err;
-                console.log(chalk.yellow(result.affectedRows+" new employee added."));
+                console.log(chalk.yellow("New employee "+answer.newFirstName.trim()+" " + answer.newLastName.trim()+"added."));
                 promotequestions()
             });
         })
@@ -168,7 +182,7 @@ const updateEmployeeRole=()=>{
             ;`,
             [answer.newRole,answer.emName], (err, results)=>{
                 if (err) throw err;
-                console.log(chalk.yellow(results.affectedRows+" employee's role has been updated."));
+                console.log(chalk.yellow(answer.emName+"'s role has been updated as "+answer.newRole+"."));
                 promotequestions();
             });
         })
@@ -226,7 +240,7 @@ const addRole=()=>{
             let sql=`insert into roles (title, salary, department_id) values (?,?,(select id from departments where name = ?));`;
             db.query(sql,[answer.newTitle,answer.newSalary,answer.newDepartment],(err,results)=>{
                 if (err) throw err;
-                console.log(chalk.yellow(results.affectedRows+" new role is added!"));
+                console.log(chalk.blueBright("New role "+ answer.newTitle+" has been added!"));
                 promotequestions();
             })
         })
@@ -265,12 +279,138 @@ const addDepartment=()=>{
             let sql= `insert into departments (name) values (?);`;
             db.query(sql,answer.newDepartment,(err,results)=>{
                 if (err) throw err;
-                console.log(chalk.yellow(results.affectedRows+" new department is added!"));
+                console.log(chalk.blueBright("New department "+ answer.newDepartment +" has been added!"));
                 promotequestions();
             })
         })
     })
 }
 
+const updateEManage=()=>{
+    let sql =`select concat (first_name," ",last_name) as name from employees;`
+    db.query(sql, (err,results)=>{
+        if (err)  throw err;
+        inquirer.prompt([
+            {
+                type:'list',
+                name:'eName',
+                message: 'Please select an employee to update his/her manager:',
+                choices: results.map(e=>e.name)
+            },
+            {
+                type:'list',
+                name:'nMName',
+                message: 'Please select the new manager of the employee:',
+                choices: results.map(e=>e.name)
+            }
+        ])
+        .then((answer)=>{
+            db.query(`update employees 
+            set manager_id = (select id from (select id from employees where concat(first_name," ",last_name) = ? ) AS tmpt)
+            where concat(first_name,' ',last_name)=?`,[answer.nMName, answer.eName],(err,result)=>{
+                if (err) throw err;
+                console.log(chalk.yellow(answer.eName+"'s manager is updated as "+answer.nMName+"!"));
+                promotequestions();
+            })
+        })
+
+    })
+}
+
+const viewbyDepart=()=>{
+    //add function
+    db.query(`select name from departments`,(err,results)=>{
+        if (err) throw err;
+        inquirer.prompt([
+            {
+                type:'list',
+                name:'dName',
+                message: 'Please select a department to view employees:',
+                choices: results.map(e=>e.name)
+            }
+        ])
+        .then(answer=>{
+            let sql=`SELECT e.id, e.first_name AS "First Name", e.last_name AS "Last Name", r.title as "Title", IFNULL(r.salary, 'No Data') AS "Salary", CONCAT(m.first_name," ",m.last_name) AS "Manager"
+            FROM employees e
+            LEFT JOIN roles r 
+            ON r.id = e.role_id 
+            LEFT JOIN departments d 
+            ON d.id = r.department_id
+            LEFT JOIN employees m ON m.id = e.manager_id
+            WHERE d.id=(select id from departments where name =?)
+            ORDER BY e.id;`
+            db.query(sql,answer.dName, (err,result)=>{
+                if (err) throw err;
+                console.table(chalk.blueBright('The list of employees from Department of '+answer.dName),result);
+                promotequestions();
+            });
+        })
+    });
+};
+
+const deleteDepart=()=>{
+    db.query(`select name from departments`,(err,results)=>{
+        if (err) throw err;
+        inquirer.prompt([
+            {
+                type:'list',
+                name:'dName',
+                message: chalk.redBright('Please select a department to delete:'),
+                choices: results.map(e=>e.name)
+            }
+        ])
+        .then(answer=>{
+            console.log(answer.dName);
+            db.query(`delete from departments where name= ?`,answer.dName, (err)=>{
+                if (err) throw err;
+                console.log(chalk.yellow('Department of '+answer.dName + ' has been deleted.'));
+                promotequestions();
+            });
+        })
+    });
+};
+
+const deleteRole=()=>{
+    db.query(`select title from roles`,(err,results)=>{
+        inquirer.prompt([
+            {
+                type:'list',
+                name:'rName',
+                message: chalk.redBright('Please select a role to delete:'),
+                choices: results.map(e=>e.title)
+            }
+        ])
+        .then(answer=>{
+            console.log(answer.rName);
+            db.query(`delete from roles where title= ?`,answer.rName, (err)=>{
+                if (err) throw err;
+                console.log(chalk.yellow('Role of '+answer.rName + ' has been deleted.'));
+                promotequestions();
+            });
+        })
+    });
+};
+
+const deleteEmployee=()=>{
+    let sql=`select concat (first_name," ",last_name) as name from employees;`;
+    db.query(sql,(err, results)=>{
+        if (err) throw err;
+        inquirer.prompt([
+            {
+                type:'list',
+                name:'name',
+                message: 'Please select an employee to delete:',
+                choices: results.map(e=>e.name)
+            }
+        ])
+        .then(answer=>{
+            db.query(`delete from employees where concat (first_name," ",last_name)= ?`,answer.name, (err,results)=>{
+                if (err) throw err;
+                console.log(chalk.yellow('Empolyee '+ answer.name+' has been deleted.'));
+                promotequestions();
+            });
+        })
+    })
+}
 
 module.exports= promotequestions;

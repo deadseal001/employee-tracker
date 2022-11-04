@@ -15,7 +15,7 @@ CREATE TABLE roles (
     INDEX dep_ind (department_id),
     CONSTRAINT fk_department 
     FOREIGN KEY (department_id) 
-    REFERENCES departments(id) ON DELETE SET NULL
+    REFERENCES departments(id) ON DELETE CASCADE
 );
 
 CREATE TABLE employees (
@@ -27,8 +27,8 @@ CREATE TABLE employees (
     CONSTRAINT fk_role 
     FOREIGN KEY (role_id) 
     REFERENCES roles(id) 
-    ON DELETE SET NULL,
+    ON DELETE CASCADE,
     manager_id INTEGER
     REFERENCES employees(id) 
-    ON DELETE SET NULL
+    ON DELETE CASCADE 
 );
